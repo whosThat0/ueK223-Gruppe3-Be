@@ -5,7 +5,10 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -85,6 +88,15 @@ public class CustomGlobalExceptionHandler {
                               .build();
   }
 
+  @ExceptionHandler({IllegalArgumentException.class})
+  @ResponseStatus(value = HttpStatus.CONFLICT)
+  public ResponseError handleIllegalArgument(IllegalArgumentException e) {
+    Map<String, String> errors = new HashMap<>();
+    errors.put("conflict", e.getMessage());
+    return new ResponseError().setTimeStamp(LocalDate.now())
+            .setErrors(errors)
+            .build();
+  }
 }
 
 
