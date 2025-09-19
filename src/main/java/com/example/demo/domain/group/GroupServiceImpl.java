@@ -4,22 +4,20 @@ import com.example.demo.core.generic.AbstractServiceImpl;
 import com.example.demo.domain.group.dto.GroupCreateDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceImpl extends AbstractServiceImpl<Group> implements GroupService {
+
     private final GroupRepository groupRepository;
     private final UserService userService;
 
-    @Autowired
     public GroupServiceImpl(GroupRepository groupRepository, UserService userService) {
         super(groupRepository);
         this.groupRepository = groupRepository;
@@ -27,27 +25,40 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     }
 
     @Override
+    public List<Group> findAllGroups() {
+        return groupRepository.findAll();
+    }
+
+    @Override
+    public Group findGroupById(UUID groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
+    }
+
+    @Override
     public Group createGroup(GroupCreateDTO dto) {
-        User admin = userService.findById(dto.getAdministratorId());
-        Set<User> members = new HashSet<>();
         if (groupRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("Group name already exists: " + dto.getName());
         }
+
+        User admin = userService.findById(dto.getAdministratorId());
+        Set<User> members = new HashSet<>();
         if (dto.getMemberIds() != null) {
             members = dto.getMemberIds()
                     .stream()
                     .map(userService::findById)
                     .collect(Collectors.toSet());
         }
+
         Group group = new Group()
                 .setName(dto.getName())
                 .setMotto(dto.getMotto())
                 .setLogo(dto.getLogo())
                 .setAdministrator(admin)
                 .setMembers(members);
+
         return groupRepository.save(group);
     }
-
 
     @Override
     public Group updateGroup(UUID groupId, GroupCreateDTO dto) {
@@ -72,18 +83,12 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         return groupRepository.save(group);
     }
 
-    @Transactional
     @Override
     public void deleteGroup(UUID groupId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
 
-        group.getMembers().forEach(member -> {
-            member.setGroup(null);
-            userService.save(member); // persist change
-        });
-
+        group.getMembers().forEach(member -> member.setGroup(null)); // detach members
         groupRepository.delete(group);
     }
-
 }

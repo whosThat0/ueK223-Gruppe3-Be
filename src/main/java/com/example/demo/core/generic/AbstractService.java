@@ -3,6 +3,8 @@ package com.example.demo.core.generic;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import com.example.demo.domain.group.Group;
 import org.springframework.data.domain.Pageable;
 
 public interface AbstractService<T extends AbstractEntity> {
