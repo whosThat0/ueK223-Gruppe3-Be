@@ -23,5 +23,4 @@ public abstract class AbstractEntity {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   @Column(columnDefinition = "uuid", name = "id", updatable = false, nullable = false)
   private UUID id;
-
 }

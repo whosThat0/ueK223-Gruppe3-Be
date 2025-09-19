@@ -51,4 +51,6 @@ public class User extends AbstractEntity {
     this.roles = roles;
   }
 
+  public void setGroup(Object o) {
+  }
 }
