@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@AllArgsConstructor@NoArgsConstructor
 public abstract class AbstractServiceImpl<T extends AbstractEntity> implements AbstractService<T> {
   protected AbstractRepository<T> repository;
+
+  public AbstractServiceImpl(AbstractRepository<T> repository) {
+    this.repository = repository;
+  }
 
   @Override
   public T save(T entity) {
@@ -45,7 +46,7 @@ public abstract class AbstractServiceImpl<T extends AbstractEntity> implements A
 
   @Override
   public List<T> findAll(Pageable pageable) {
-    Page<T> pagedResult = repository.findAll(pageable);
+    var pagedResult = repository.findAll(pageable);
     return pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<>();
   }
 
@@ -58,6 +59,4 @@ public abstract class AbstractServiceImpl<T extends AbstractEntity> implements A
   public boolean existsById(UUID id) {
     return repository.existsById(id);
   }
-
-
 }

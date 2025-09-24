@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,6 +48,13 @@ public class WebSecurityConfig {
                     authenticationManager(), jwtProperties), UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(new JWTAuthorizationFilter(userService, jwtProperties),
                     UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+                      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                      response.setContentType("application/json");
+                      response.getWriter().write("{\"timeStamp\":\"" + java.time.Instant.now() +
+                              "\",\"error\":\"Unauthorized\",\"message\":\"Authentication token is missing or invalid\"}");
+                    }))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
