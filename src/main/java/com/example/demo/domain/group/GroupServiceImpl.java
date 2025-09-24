@@ -4,13 +4,11 @@ import com.example.demo.core.generic.AbstractServiceImpl;
 import com.example.demo.domain.group.dto.GroupCreateDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.UserService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceImpl extends AbstractServiceImpl<Group> implements GroupService {
@@ -26,6 +24,20 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         this.userService = userService;
     }
 
+    private Set<User> mapMembers(Set<UUID> memberIds) {
+        if (memberIds == null || memberIds.isEmpty()) {
+            return Set.of();
+        }
+
+        Set<User> users = new java.util.HashSet<>();
+        for (UUID id : memberIds) {
+            User user = userService.findById(id); // assuming this throws if not found
+            users.add(user);
+            user.setGroup(null); // reset old group if needed, optional depending on your logic
+        }
+        return users;
+    }
+
     @Override
     public List<Group> findAllGroups() {
         return groupRepository.findAll();
@@ -39,11 +51,22 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
 
     @Override
     public Group createGroup(GroupCreateDTO dto) {
+        User admin = userService.getCurrentAuthenticatedUser();
+
+        // 🔒 permission check: flatten roles → authorities → check for GROUP_CREATE
+        boolean canCreate = admin.getRoles().stream()
+                .flatMap(role -> role.getAuthorities().stream())
+                .anyMatch(auth -> "GROUP_CREATE".equals(auth.getName()));
+
+        if (!canCreate) {
+            throw new AccessDeniedException("You do not have permission to create groups");
+        }
+
         if (groupRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("Group name already exists: " + dto.getName());
         }
-        User admin = userService.getCurrentAuthenticatedUser();
-        Set<User> members = mapMembers(dto.getMemberIds());
+
+        Set<User> members = mapMembers(dto.getMemberIds()); //doesnt work
 
         Group group = new Group()
                 .setName(dto.getName())
@@ -51,14 +74,8 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
                 .setLogo(dto.getLogo())
                 .setAdministrator(admin)
                 .setMembers(members);
-        return groupRepository.save(group);
-    }
 
-    private Set<User> mapMembers(Set<UUID> memberIds) {
-        if (memberIds == null) return Collections.emptySet();
-        return memberIds.stream()
-                .map(userService::findById)
-                .collect(Collectors.toSet());
+        return groupRepository.save(group);
     }
 
     @Override
@@ -73,7 +90,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         group.setLogo(dto.getLogo());
 
         if (dto.getMemberIds() != null) {
-            group.setMembers(mapMembers(dto.getMemberIds()));
+            group.setMembers(mapMembers(dto.getMemberIds())); //doesnt work
         }
         return groupRepository.save(group);
     }
