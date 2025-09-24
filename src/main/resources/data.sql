@@ -61,3 +61,20 @@ insert into users_role (users_id, role_id)
 values ('11111111-2222-3333-4444-555555555555', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02')
     ON CONFLICT DO NOTHING;
 
+
+-- GROUPS
+INSERT INTO groups (id, name, motto, logo, administrator_id)
+VALUES
+    ('f8dcb318-1f2a-4e17-a000-16c5587887c1', 'TestInOrdnerToTestJoin', 'Hello', 'https://www.noser.com/wp-content/uploads/2018/09/Noser-Young-neu.jpg', 'ba804cb9-fa14-42a5-afaf-be488742fc54'), -- Admin is James Bond (no membership)
+    ('22222222-3333-4444-5555-666666666666', 'Fight Club', 'The first rule...', 'https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg', '0d8fa44c-54fd-4cd0-ace9-2a7da57992de'), -- Tyler is admin
+    ('33333333-4444-5555-6666-777777777777', 'Gamers United', 'Respawn. Retry. Dominate.', 'https://cdn-icons-png.flaticon.com/512/69/69881.png', '0d8fa34c-54fd-4cd0-ace9-2a7da57992de') -- Extrauser is admin
+ON CONFLICT DO NOTHING;
+
+
+INSERT INTO group_members (group_id, user_id)
+VALUES
+    ('22222222-3333-4444-5555-666666666666', '0d8fa44c-54fd-4cd0-ace9-2a7da57992de'),
+    ('33333333-4444-5555-6666-777777777777', '0d8fa34c-54fd-4cd0-ace9-2a7da57992de')
+
+ON CONFLICT DO NOTHING;
+
