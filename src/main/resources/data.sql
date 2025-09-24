@@ -5,7 +5,8 @@
 
 insert into users (id, email,first_name,last_name, password)
 values ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'admin@example.com', 'James','Bond', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6' ), -- Password: 1234
-('0d8fa44c-54fd-4cd0-ace9-2a7da57992de', 'user@example.com', 'Tyler','Durden', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6') -- Password: 1234
+('0d8fa44c-54fd-4cd0-ace9-2a7da57992de', 'user@example.com', 'Tyler','Durden', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6'), -- Password: 1234
+('0d8fa34c-54fd-4cd0-ace9-2a7da57992de', 'extrauser@example.com', 'Sønny', 'Spëcial#1', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6')-- Password: 1234
  ON CONFLICT DO NOTHING;
 
 
@@ -27,10 +28,11 @@ ON CONFLICT DO NOTHING;
 --assign roles to users
 insert into users_role (users_id, role_id)
 values ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'd29e709c-0ff1-4f4c-a7ef-09f656c390f1'),
-       ('0d8fa44c-54fd-4cd0-ace9-2a7da57992de', 'd29e709c-0ff1-4f4c-a7ef-09f656c390f1'),
-       ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'ab505c92-7280-49fd-a7de-258e618df074'),
-       ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02')
- ON CONFLICT DO NOTHING;
+    ('0d8fa44c-54fd-4cd0-ace9-2a7da57992de', 'd29e709c-0ff1-4f4c-a7ef-09f656c390f1'),
+    ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'ab505c92-7280-49fd-a7de-258e618df074'),
+    ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02')
+ON CONFLICT DO NOTHING;
+
 
 --assign authorities to roles
 INSERT INTO role_authority(role_id, authority_id)
@@ -40,4 +42,8 @@ VALUES ('d29e709c-0ff1-4f4c-a7ef-09f656c390f1', '2ebf301e-6c61-4076-98e3-2a38b31
 ('ab505c92-7280-49fd-a7de-258e618df074', 'e7c3f0a8-1234-4a56-8901-abcdef123456')
  ON CONFLICT DO NOTHING;
 
+INSERT INTO groups (id, name, motto, logo, administrator_id)
+VALUES
+    ('f8dcb318-1f2a-4e17-a000-16c5587887c1', 'TestInOrdnerToTestJoin', 'Hello', 'https://www.noser.com/wp-content/uploads/2018/09/Noser-Young-neu.jpg', 'ba804cb9-fa14-42a5-afaf-be488742fc54')
+ON CONFLICT DO NOTHING;
 
