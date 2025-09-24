@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GroupCreateDTO extends AbstractDTO {
     @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "The group name must be between {min} and {max} characters long.")
     private String name;
     private String motto;
     @Pattern(regexp = ".*\\.(png|jpg)$", message = "Logo must be a PNG or JPG file")
