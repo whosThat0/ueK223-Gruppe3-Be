@@ -18,6 +18,8 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     private final GroupRepository groupRepository;
     private final UserService userService;
 
+    private static final String GROUP_NOT_FOUND = "Group not found with id: ";
+
     public GroupServiceImpl(GroupRepository groupRepository, UserService userService) {
         super(groupRepository);
         this.groupRepository = groupRepository;
@@ -32,7 +34,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     @Override
     public Group findGroupById(UUID groupId) {
         return groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
+                .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
     }
 
     @Override
@@ -63,8 +65,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     @Override
     public Group updateGroup(UUID groupId, GroupCreateDTO dto) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
-
+                .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
         if (!group.getName().equals(dto.getName()) && groupRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("Group name already exists: " + dto.getName());
         }
@@ -86,9 +87,22 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     @Override
     public void deleteGroup(UUID groupId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
-
+                .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
         group.getMembers().forEach(member -> member.setGroup(null)); // detach members
         groupRepository.delete(group);
+    }
+
+    @Override
+    public void joinGroup(UUID userId, UUID groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
+        User user = userService.findById(userId);
+
+        if (user.getGroup() != null) {
+            throw new IllegalArgumentException("User is already part of a group: " + user.getGroup().getName());
+        }
+        user.setGroup(group);
+        group.getMembers().add(user);
+        groupRepository.save(group);
     }
 }
