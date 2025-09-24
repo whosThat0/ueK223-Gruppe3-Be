@@ -7,8 +7,9 @@ import com.example.demo.domain.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,24 +24,26 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     }
     @Override
     public Group createGroup(GroupCreateDTO dto) {
-        User admin = userService.findById(dto.getAdministratorId());
-        Set<User> members = new HashSet<>();
         if (groupRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("Group name already exists: " + dto.getName());
         }
-        if (dto.getMemberIds() != null) {
-            members = dto.getMemberIds()
-                    .stream()
-                    .map(userService::findById)
-                    .collect(Collectors.toSet());
-        }
-        Group group = new Group()
+
+        User admin = userService.getCurrentAuthenticatedUser();
+        Set<User> members = mapMembers(dto.getMemberIds());
+
+        return groupRepository.save(new Group()
                 .setName(dto.getName())
                 .setMotto(dto.getMotto())
                 .setLogo(dto.getLogo())
                 .setAdministrator(admin)
-                .setMembers(members);
-        return groupRepository.save(group);
+                .setMembers(members));
+    }
+
+    private Set<User> mapMembers(Set<UUID> memberIds) {
+        if (memberIds == null) return Collections.emptySet();
+        return memberIds.stream()
+                .map(userService::findById)
+                .collect(Collectors.toSet());
     }
 }
 

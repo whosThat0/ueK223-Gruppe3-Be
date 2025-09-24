@@ -22,7 +22,5 @@ public class GroupCreateDTO extends AbstractDTO {
     private String motto;
     @Pattern(regexp = ".*\\.(png|jpg)$", message = "Logo must be a PNG or JPG file")
     private String logo;
-    @NotNull
-    private UUID administratorId;
     private Set<UUID> memberIds;
 }
