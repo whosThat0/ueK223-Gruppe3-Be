@@ -51,7 +51,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('GROUP_DELETE')")
     public void deleteGroup(@PathVariable UUID id) {
         groupService.deleteGroup(id);
     }

@@ -9,7 +9,6 @@ values ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'admin@example.com', 'James','Bo
 ('0d8fa34c-54fd-4cd0-ace9-2a7da57992de', 'extrauser@example.com', 'Sønny', 'Spëcial#1', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6')-- Password: 1234
  ON CONFLICT DO NOTHING;
 
-
 --ROLES
 INSERT INTO  role(id, name)
 VALUES ('d29e709c-0ff1-4f4c-a7ef-09f656c390f1', 'DEFAULT'),
@@ -23,7 +22,7 @@ VALUES ('2ebf301e-6c61-4076-98e3-2a38b31daf86', 'DEFAULT'),
 ('76d2cbf6-5845-470e-ad5f-2edb9e09a868', 'USER_MODIFY'),
 ('21c942db-a275-43f8-bdd6-d048c21bf5ab', 'USER_DEACTIVATE'),
 ('e7c3f0a8-1234-4a56-8901-abcdef123456', 'GROUP_CREATE'),
-('abcd1234-5678-90ef-1234-567890abcdef', 'ADMIN')
+('abcd1234-5678-90ef-1234-567890abcdef', 'GROUP_DELETE')
 ON CONFLICT DO NOTHING;
 
 -- assign roles to users
