@@ -6,6 +6,8 @@ import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.UserService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +28,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
 
     private Set<User> mapMembers(Set<UUID> memberIds) {
         if (memberIds == null || memberIds.isEmpty()) {
-            return Set.of();
+            return new HashSet<>();
         }
 
         Set<User> users = new java.util.HashSet<>();
