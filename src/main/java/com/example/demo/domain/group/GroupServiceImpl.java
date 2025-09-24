@@ -31,9 +31,9 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
 
         Set<User> users = new java.util.HashSet<>();
         for (UUID id : memberIds) {
-            User user = userService.findById(id); // assuming this throws if not found
+            User user = userService.findById(id);
             users.add(user);
-            user.setGroup(null); // reset old group if needed, optional depending on your logic
+            user.setGroup(null);
         }
         return users;
     }
@@ -53,7 +53,6 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     public Group createGroup(GroupCreateDTO dto) {
         User admin = userService.getCurrentAuthenticatedUser();
 
-        // 🔒 permission check: flatten roles → authorities → check for GROUP_CREATE
         boolean canCreate = admin.getRoles().stream()
                 .flatMap(role -> role.getAuthorities().stream())
                 .anyMatch(auth -> "GROUP_CREATE".equals(auth.getName()));
@@ -66,7 +65,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
             throw new IllegalArgumentException("Group name already exists: " + dto.getName());
         }
 
-        Set<User> members = mapMembers(dto.getMemberIds()); //doesnt work
+        Set<User> members = mapMembers(dto.getMemberIds());
 
         Group group = new Group()
                 .setName(dto.getName())
@@ -90,7 +89,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         group.setLogo(dto.getLogo());
 
         if (dto.getMemberIds() != null) {
-            group.setMembers(mapMembers(dto.getMemberIds())); //doesnt work
+            group.setMembers(mapMembers(dto.getMemberIds()));
         }
         return groupRepository.save(group);
     }
