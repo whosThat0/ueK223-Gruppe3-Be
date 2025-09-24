@@ -4,11 +4,14 @@ import com.example.demo.core.generic.AbstractServiceImpl;
 import com.example.demo.domain.role.Role;
 import com.example.demo.domain.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,6 +47,16 @@ public class UserServiceImpl extends AbstractServiceImpl<User> implements UserSe
   public User registerUser(User user){
     user.setPassword(passwordEncoder.encode("1234"));
     return save(user);
+  }
+
+  @Override
+  public User getCurrentAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl principal)) {
+      throw new IllegalStateException("No authenticated user found");
+    }
+    return repository.findById(principal.user().getId())
+            .orElseThrow(() -> new NoSuchElementException("Authenticated user not found"));
   }
 
 }

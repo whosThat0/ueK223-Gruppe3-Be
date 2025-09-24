@@ -1,6 +1,8 @@
 package com.example.demo.domain.group;
 
 import com.example.demo.domain.group.dto.GroupCreateDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +29,14 @@ public class GroupController {
     }
 
     @PostMapping
-    public Group createGroup(@RequestBody GroupCreateDTO dto) {
+    public Group createGroup(@Valid @RequestBody GroupCreateDTO dto) {
         return groupService.createGroup(dto);
+    }
+
+    @PostMapping("/{groupId}/join")
+    public ResponseEntity<String> joinGroup(@PathVariable UUID groupId, @RequestParam UUID userId) {
+        groupService.joinGroup(userId, groupId);
+        return ResponseEntity.ok("User joined group successfully");
     }
 
     @PutMapping("/{id}")
