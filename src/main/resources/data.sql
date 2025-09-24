@@ -21,7 +21,8 @@ INSERT INTO authority(id, name)
 VALUES ('2ebf301e-6c61-4076-98e3-2a38b31daf86', 'DEFAULT'),
 ('76d2cbf6-5845-470e-ad5f-2edb9e09a868', 'USER_MODIFY'),
 ('21c942db-a275-43f8-bdd6-d048c21bf5ab', 'USER_DEACTIVATE'),
-('e7c3f0a8-1234-4a56-8901-abcdef123456', 'GROUP_CREATE')
+('e7c3f0a8-1234-4a56-8901-abcdef123456', 'GROUP_CREATE'),
+('abcd1234-5678-90ef-1234-567890abcdef', 'ADMIN')
 ON CONFLICT DO NOTHING;
 
 --assign roles to users
@@ -37,7 +38,8 @@ INSERT INTO role_authority(role_id, authority_id)
 VALUES ('d29e709c-0ff1-4f4c-a7ef-09f656c390f1', '2ebf301e-6c61-4076-98e3-2a38b31daf86'),
 ('ab505c92-7280-49fd-a7de-258e618df074', '76d2cbf6-5845-470e-ad5f-2edb9e09a868'),
 ('c6aee32d-8c35-4481-8b3e-a876a39b0c02', '21c942db-a275-43f8-bdd6-d048c21bf5ab'),
-('ab505c92-7280-49fd-a7de-258e618df074', 'e7c3f0a8-1234-4a56-8901-abcdef123456')
+('ab505c92-7280-49fd-a7de-258e618df074', 'e7c3f0a8-1234-4a56-8901-abcdef123456'),
+('ab505c92-7280-49fd-a7de-258e618df074', 'abcd1234-5678-90ef-1234-567890abcdef')
  ON CONFLICT DO NOTHING;
 
 
