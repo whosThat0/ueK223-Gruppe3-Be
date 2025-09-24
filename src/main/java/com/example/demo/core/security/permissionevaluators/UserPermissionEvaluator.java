@@ -11,7 +11,7 @@ import java.util.UUID;
 public class UserPermissionEvaluator {
 
   public boolean exampleEvaluator(User principal, UUID id) {
-    //your code here
+
     return true;
   }
 
