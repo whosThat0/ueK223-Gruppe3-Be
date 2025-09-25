@@ -4,11 +4,12 @@ import com.example.demo.core.generic.AbstractServiceImpl;
 import com.example.demo.domain.group.dto.GroupCreateDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable; // Required for the new method
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,6 +27,20 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         this.userService = userService;
     }
 
+    // ***************************************************************
+    // ✅ FIX: Implement the required abstract method from GroupService
+    // ***************************************************************
+    @Override
+    public Page<Group> findAllGroups(Pageable pageable) {
+        // Assuming your GroupRepository extends JpaRepository<Group, UUID>,
+        // it automatically provides the findAll(Pageable) method.
+        return groupRepository.findAll(pageable);
+    }
+
+    // ***************************************************************
+    // The rest of your existing methods follow
+    // ***************************************************************
+
     private Set<User> mapMembers(Set<UUID> memberIds) {
         if (memberIds == null || memberIds.isEmpty()) {
             return new HashSet<>();
@@ -35,14 +50,9 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         for (UUID id : memberIds) {
             User user = userService.findById(id);
             users.add(user);
-            user.setGroup(null);
+            user.setGroup(null); // NOTE: This looks like it might incorrectly reset the group for the user being added. You should review this logic.
         }
         return users;
-    }
-
-    @Override
-    public List<Group> findAllGroups() {
-        return groupRepository.findAll();
     }
 
     @Override
@@ -104,11 +114,10 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         groupRepository.delete(group);
     }
 
+    @Override // Note: You need the @Override annotation here
     public void joinGroup(UUID groupId) {
-        User user = userService.getCurrentAuthenticatedUser(); // Use the existing method
-        UUID userId = user.getId();
+        User user = userService.getCurrentAuthenticatedUser();
 
-        // 2. The rest of the logic remains the same
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
 

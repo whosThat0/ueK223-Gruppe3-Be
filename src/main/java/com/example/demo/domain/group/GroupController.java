@@ -1,12 +1,14 @@
 package com.example.demo.domain.group;
 
 import com.example.demo.domain.group.dto.GroupCreateDTO;
+import com.example.demo.domain.group.dto.GroupPageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page; // ⬅️ NEW Import
+import org.springframework.data.domain.Pageable; // ⬅️ NEW Import
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,8 +23,12 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public List<Group> getAllGroups() {
-        return groupService.findAllGroups();
+// 1. Return the new DTO instead of the raw Page object
+    public GroupPageDTO getAllGroups(Pageable pageable) {
+        Page<Group> groupPage = groupService.findAllGroups(pageable);
+
+        // 2. Wrap the Spring Page object in your custom DTO
+        return new GroupPageDTO(groupPage);
     }
 
     @GetMapping("/{id}")
