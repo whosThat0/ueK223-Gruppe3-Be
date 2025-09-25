@@ -3,12 +3,13 @@ package com.example.demo.domain.group;
 import com.example.demo.domain.group.dto.GroupCreateDTO;
 import com.example.demo.domain.group.dto.GroupPageDTO;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page; // ⬅️ NEW Import
-import org.springframework.data.domain.Pageable; // ⬅️ NEW Import
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -52,13 +53,15 @@ public class GroupController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('GROUP_CREATE')")
-    public Group updateGroup(@PathVariable UUID id, @RequestBody GroupCreateDTO dto) {
+    public Group updateGroup(@PathVariable UUID id, @Valid @RequestBody GroupCreateDTO dto) {
         return groupService.updateGroup(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('GROUP_DELETE')")
-    public void deleteGroup(@PathVariable UUID id) {
+    public ResponseEntity<Map<String, String>> deleteGroup(@PathVariable UUID id) {
         groupService.deleteGroup(id);
+        return ResponseEntity.ok(response);
     }
+
 }
