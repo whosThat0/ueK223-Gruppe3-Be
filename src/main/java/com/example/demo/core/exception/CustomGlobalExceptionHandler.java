@@ -37,6 +37,8 @@ public class CustomGlobalExceptionHandler {
                               .build();
   }
 
+  // Handles validation and DB constraint violations.
+  // Returns field-specific or generic error messages with timestamp for consistent API responses.
   @ExceptionHandler({ConstraintViolationException.class, DataIntegrityViolationException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseError handleConstraintViolation(Exception e) {

@@ -28,7 +28,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
     }
 
     // ***************************************************************
-    // ✅ FIX: Implement the required abstract method from GroupService
+    // FIX: Implement the required abstract method from GroupService
     // ***************************************************************
     @Override
     public Page<Group> findAllGroups(Pageable pageable) {
@@ -50,7 +50,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         for (UUID id : memberIds) {
             User user = userService.findById(id);
             users.add(user);
-            user.setGroup(null); // NOTE: This looks like it might incorrectly reset the group for the user being added. You should review this logic.
+            user.setGroup(null);
         }
         return users;
     }
@@ -114,7 +114,7 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         groupRepository.delete(group);
     }
 
-    @Override // Note: You need the @Override annotation here
+    @Override
     public void joinGroup(UUID groupId) {
         User user = userService.getCurrentAuthenticatedUser();
 

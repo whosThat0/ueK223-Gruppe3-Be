@@ -24,7 +24,7 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-// 1. Return the new DTO instead of the raw Page object
+        // 1. Return the new DTO instead of the raw Page object
     public GroupPageDTO getAllGroups(Pageable pageable) {
         Page<Group> groupPage = groupService.findAllGroups(pageable);
 
