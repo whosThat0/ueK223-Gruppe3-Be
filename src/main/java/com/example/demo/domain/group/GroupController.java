@@ -61,6 +61,7 @@ public class GroupController {
     @PreAuthorize("hasAuthority('GROUP_DELETE')")
     public ResponseEntity<Map<String, String>> deleteGroup(@PathVariable UUID id) {
         groupService.deleteGroup(id);
+        Map<String, String> response = Map.of("message", "Group deleted successfully");
         return ResponseEntity.ok(response);
     }
 
