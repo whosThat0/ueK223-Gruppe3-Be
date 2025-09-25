@@ -69,4 +69,10 @@ public class UserController {
     userService.deleteById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
+
+  @GetMapping("/current")
+  public ResponseEntity<UserDTO> getCurrentUser() {
+    User currentUser = userService.getCurrentAuthenticatedUser();
+    return ResponseEntity.ok(userMapper.toDTO(currentUser));
+  }
 }

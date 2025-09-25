@@ -37,10 +37,10 @@ public class GroupController {
         return groupService.createGroup(dto);
     }
 
-    @PostMapping("/{groupId}/join")
+    @PostMapping("/{groupId}/join") // No query parameter needed
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<String> joinGroup(@PathVariable UUID groupId, @RequestParam UUID userId) {
-        groupService.joinGroup(userId, groupId);
+    public ResponseEntity<String> joinGroup(@PathVariable UUID groupId) {
+        groupService.joinGroup(groupId);
         return ResponseEntity.ok("User joined group successfully");
     }
 

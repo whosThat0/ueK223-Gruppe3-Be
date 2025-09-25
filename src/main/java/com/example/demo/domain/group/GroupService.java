@@ -15,5 +15,5 @@ public interface GroupService extends AbstractService<Group> {
     Group updateGroup(UUID id, GroupCreateDTO dto);
 
     void deleteGroup(UUID id);
-    void joinGroup(UUID userId, UUID groupId);
+    void joinGroup(UUID userId);
 }

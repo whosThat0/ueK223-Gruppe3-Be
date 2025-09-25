@@ -104,11 +104,13 @@ public class GroupServiceImpl extends AbstractServiceImpl<Group> implements Grou
         groupRepository.delete(group);
     }
 
-    @Override
-    public void joinGroup(UUID userId, UUID groupId) {
+    public void joinGroup(UUID groupId) {
+        User user = userService.getCurrentAuthenticatedUser(); // Use the existing method
+        UUID userId = user.getId();
+
+        // 2. The rest of the logic remains the same
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException(GROUP_NOT_FOUND + groupId));
-        User user = userService.findById(userId);
 
         if (user.getGroup() != null) {
             throw new IllegalArgumentException("User is already part of a group: " + user.getGroup().getName());
