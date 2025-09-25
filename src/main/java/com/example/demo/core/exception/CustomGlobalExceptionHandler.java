@@ -5,13 +5,13 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +35,21 @@ public class CustomGlobalExceptionHandler {
                                            .collect(Collectors.toMap(FieldError::getField,
                                                DefaultMessageSourceResolvable::getDefaultMessage)))
                               .build();
+  }
+
+  @ExceptionHandler({ConstraintViolationException.class, DataIntegrityViolationException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseError handleConstraintViolation(Exception e) {
+    Map<String, String> errors = new HashMap<>();
+    String message = e.getMessage();
+    if (message != null && message.contains("groups") && message.contains("name")) {
+      errors.put("name", "Name can not be empty");
+    } else {
+      errors.put("constraintViolation", message);
+    }
+    return new ResponseError().setTimeStamp(LocalDate.now())
+            .setErrors(errors)
+            .build();
   }
 
   @ExceptionHandler({NoSuchElementException.class})
