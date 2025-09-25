@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -46,13 +48,17 @@ public class GroupController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('GROUP_CREATE')")
-    public Group updateGroup(@PathVariable UUID id, @RequestBody GroupCreateDTO dto) {
+    public Group updateGroup(@PathVariable UUID id, @Valid @RequestBody GroupCreateDTO dto) {
         return groupService.updateGroup(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('GROUP_DELETE')")
-    public void deleteGroup(@PathVariable UUID id) {
+    public ResponseEntity<Map<String, String>> deleteGroup(@PathVariable UUID id) {
         groupService.deleteGroup(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Group has been deleted");
+        return ResponseEntity.ok(response);
     }
+
 }
