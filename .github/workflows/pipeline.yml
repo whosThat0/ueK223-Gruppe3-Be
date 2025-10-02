@@ -1,0 +1,13 @@
+name: Hello World CI
+
+on:
+  push:   # runs on every commit push
+    branches:
+      - main   # or change to your branch
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello World
+        run: echo "hello world"
